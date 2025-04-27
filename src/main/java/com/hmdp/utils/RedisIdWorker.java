@@ -17,6 +17,7 @@ public class RedisIdWorker {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    // redis生成全局唯一ID
     public long nextId(String keyprefix){
         // 生成时间戳
         LocalDateTime now = LocalDateTime.now();
