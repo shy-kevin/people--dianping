@@ -11,7 +11,7 @@ local userId = ARGV[2]
 
 -- key
 local stockKey = 'seckill:stock:'..voucherId  -- 库存key
-local orderKey = 'seckill:order:'..userId  -- 订单key
+local orderKey = 'seckill:order:'..voucherId  -- 订单key
 
 if(tonumber(redis.call('get',stockKey)) <= 0) then -- 这个get返回的是字符串类型，所以要tonumber转成数字
     return 1 -- 库存不足返回1

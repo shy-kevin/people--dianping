@@ -67,6 +67,12 @@
             <version>3.13.6</version>
         </dependency>
 
+        <!--引入AMQP依赖，包含RabbiMQ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

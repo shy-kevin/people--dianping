@@ -3,11 +3,29 @@ server:
 spring:
   application:
     name: dianping
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /shy
+    password: 123456
+    username: shy
+    connection-timeout: 1s #设置MQ的连接超时时间
+    template:
+      retry:
+        enabled: true     #开启超时重试机制
+        initial-interval: 1000ms #失败以后的初始等待时间
+        multiplier: 2 #失败后下次等待时长倍数
+        max-attempts: 3 #最大重试次数
+    publisher-confirm-type: correlated #开启publisher confirm机制，并设置confirm类型 , correlated表示MQ异步回调方式返回回执消息
+    publisher-returns: true # 开启publisher return机制
+
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/dianping?useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
+
   redis:
     host: localhost
     port: 6379
@@ -19,6 +37,7 @@ spring:
         min-idle: 1
         time-between-eviction-runs: 10s
     database: 0
+
   jackson:
     default-property-inclusion: non_null # JSON处理时忽略非空字段
 mybatis-plus:
@@ -26,3 +45,4 @@ mybatis-plus:
 logging:
   level:
     com.hmdp: debug
+
