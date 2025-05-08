@@ -13,6 +13,7 @@ import com.hmdp.utils.SimpleRedisLock;
 import com.hmdp.utils.UserHolder;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -45,6 +46,9 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     @Autowired
     private RedissonClient redissonClient;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     private static final DefaultRedisScript<Long> UNLOCK_SCRIPT;  // 初始化加载lua脚本，用静态代码块加载
     static {
         UNLOCK_SCRIPT = new DefaultRedisScript<>();
@@ -64,7 +68,13 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         }
         // r为0，说明有购买资格，可以下单，生成一个订单id
         long orderId = redisIdWorker.nextId("order");
-        // TODO 放到阻塞队列中，开启另一个线程去数据库写订单
+        //放到阻塞队列中，开启另一个线程去数据库写订单
+        VoucherOrder voucherOrder = new VoucherOrder();
+        voucherOrder.setId(orderId);
+        voucherOrder.setUserId(userId);
+        voucherOrder.setVoucherId(voucherId);
+        // 将订单信息发送到mq中
+        rabbitTemplate.convertAndSend("order.direct","order",voucherOrder);  // 然后在写一个方法来监听那个队列，实现订单的创建
 
         return Result.ok(orderId);
     }
