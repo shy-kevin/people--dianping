@@ -16,7 +16,7 @@ public class Mvcconfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {  // 添加拦截器,和拦截路径,多个拦截器的情况下默认按照拦截器的添加顺序来执行
         registry.addInterceptor(new LoginInterceptor(stringRedisTemplate))
-                .excludePathPatterns("/user/login","/user/code","/blog/hot","/shop/**","/voucher/**","/shop-type/**","/upload/**").order(0);  // order值越大优先级越低
+                .excludePathPatterns("/user/login","/user/code","/shop/**","/voucher/**","/shop-type/**","/upload/**").order(0);  // order值越大优先级越低
         registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate)).addPathPatterns("/**").order(1);   // 默认拦截所有路径,可以不用加addPathPatterns("/**")
     }
 }
